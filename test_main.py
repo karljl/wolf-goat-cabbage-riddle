@@ -111,12 +111,76 @@ class TestBankValidator(TestCase):
 
 
 class TestNewStateFinder(TestCase):
+    states = [
+        State(  # 0
+            current_bank=[Item.CABBAGE, Item.WOLF],
+            other_bank=[Item.GOAT],
+            boat_position=Location.RIGHT_BANK,
+            last_item=Item.WOLF
+        ),
+        State(  # 1
+            current_bank=[Item.CABBAGE, Item.GOAT],
+            other_bank=[Item.WOLF],
+            boat_position=Location.RIGHT_BANK,
+            last_item=Item.CABBAGE
+        ),
+        State(  # 2
+            current_bank=[Item.CABBAGE, Item.WOLF],
+            other_bank=[Item.GOAT],
+            boat_position=Location.LEFT_BANK,
+            last_item=Item.WOLF
+        ),
+    ]
+
+    new_state_finders = [
+        NewStateFinder(state=states[0]),
+        NewStateFinder(state=states[1]),
+        NewStateFinder(state=states[2])
+    ]
 
     def test_empty_move_is_winning(self):
-        pass
+        self.assertTrue(self.new_state_finders[0].empty_move_is_winning)
+        self.assertFalse(self.new_state_finders[1].empty_move_is_winning)
+        self.assertFalse(self.new_state_finders[2].empty_move_is_winning)
 
     def test_get_new_states(self):
-        pass
+        self.assertEqual(
+            self.new_state_finders[0].get_new_states(),
+            [State(
+                current_bank=[Item.GOAT],
+                other_bank=[Item.WOLF, Item.CABBAGE],
+                boat_position=Location.LEFT_BANK,
+                last_item=None
+            )]
+        )
+
+        self.assertEqual(
+            self.new_state_finders[1].get_new_states(),
+            [State(
+                current_bank=[Item.WOLF, Item.GOAT],
+                other_bank=[Item.CABBAGE],
+                boat_position=Location.LEFT_BANK,
+                last_item=Item.GOAT
+            )]
+        )
+
+        self.assertEqual(
+            self.new_state_finders[2].get_new_states(),
+            [
+                State(
+                    current_bank=[Item.GOAT],
+                    other_bank=[Item.CABBAGE, Item.WOLF],
+                    boat_position=Location.RIGHT_BANK,
+                    last_item=None
+                ),
+                State(
+                    current_bank=[Item.GOAT, Item.CABBAGE],
+                    other_bank=[Item.WOLF],
+                    boat_position=Location.RIGHT_BANK,
+                    last_item=Item.CABBAGE
+                )
+            ]
+        )
 
 
 class TestEngine(TestCase):
