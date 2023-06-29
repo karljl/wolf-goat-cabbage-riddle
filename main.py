@@ -110,8 +110,8 @@ class BankValidator:
     @staticmethod
     def is_stable(bank: list[Item]) -> bool:
         valid_conditions = (
-            Item.GOAT not in bank or Item.CABBAGE not in bank,
-            Item.GOAT not in bank or Item.WOLF not in bank,
+            not (Item.GOAT in bank and Item.CABBAGE in bank),
+            not (Item.GOAT in bank and Item.WOLF in bank),
         )
 
         return all(valid_conditions)
